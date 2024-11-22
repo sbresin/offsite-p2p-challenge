@@ -1,11 +1,12 @@
 import { createApp } from "vue";
 import "./style.css";
 import App from "./App.vue";
-import { createBaseRounds, fetchLastFiveRounds } from "./data";
+import { getSomeRoundsForTests,fetchLastFiveRounds,addAnswer } from "./data";
 
 createApp(App).mount("#app");
 
-fetchLastFiveRounds().then((rounds) => {
-    console.log("Last five rounds:", rounds);
-  });
-  
+addAnswer("killround", "Alice", "Category1", "Answer-Round1");
+addAnswer("killround", "Alice", "Category2", "Answer-Round2");
+addAnswer("killround", "Bob", "Category2", "Answer-Round2");
+
+fetchLastFiveRounds();

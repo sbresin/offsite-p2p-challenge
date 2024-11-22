@@ -20,7 +20,7 @@ export function addAnswer(
 
   // Create or update the round entry
   gun
-    .get("gameturns")
+    .get("ecir")
     .get(roundId)
     .get("answers")
     .put(
@@ -34,7 +34,7 @@ export function addAnswer(
 
   // Ensure the round entry has a timestamp
   gun
-    .get("gameturns")
+    .get("ecir")
     .get(roundId)
     .put(
       {
@@ -52,38 +52,53 @@ export function addAnswer(
 export function fetchLastFiveRounds(): Promise<Round[]> {
   return new Promise((resolve) => {
     const rounds: Round[] = [];
-    const promises: Promise<void>[] = [];
 
+    // Log the start of the data fetch
+    console.log("Fetching rounds from GunDB...");
+
+    // Use the map() function to iterate over all rounds in GunDB
     gun
-      .get("gameturns")
+      .get("ecir")
       .map()
       .once((data: Round, roundId: string) => {
         if (data && data.timestamp) {
-          promises.push(
-            new Promise((res) => {
-              rounds.push({ ...data, round_id: roundId });
-              res(); // Resolve once this round is processed
-            })
-          );
+          // Log each round as it's retrieved
+          console.log(`Fetched round: ${roundId}, Timestamp: ${data.timestamp}`);
+          rounds.push({ ...data, round_id: roundId });
         }
       });
 
-    // Wait for all rounds to be processed
-    Promise.all(promises).then(() => {
-      const sortedRounds = rounds.sort((a, b) => b.timestamp - a.timestamp);
-      const lastFiveRounds = sortedRounds.slice(0, 5);
-      resolve(lastFiveRounds);
-    });
+    // Listen for changes and resolve once the data is completely loaded
+    gun
+      .get("ecir")
+      .map()
+      .once(() => {
+        // Log before sorting the rounds
+        console.log("Sorting rounds by timestamp...");
+
+        // Sort the rounds by timestamp in descending order
+        const sortedRounds = rounds.sort((a, b) => b.timestamp - a.timestamp);
+        
+        // Slice the first 5 rounds
+        const lastFiveRounds = sortedRounds.slice(0, 5);
+
+        // Log the sorted rounds
+        console.log("Last five rounds:", lastFiveRounds);
+
+        // Resolve the promise with the last five rounds
+        resolve(lastFiveRounds);
+      });
   });
 }
 
 
-export function createBaseRounds() {
+
+export function getSomeRoundsForTests() {
   console.log("hello");
 
   for (let i = 1; i <= 2; ++i) {
     gun
-      .get("gameturns")
+      .get("ecir")
       .get(`testRound${i}`)
       .get("answers")
       .on((data) => console.log(data));
