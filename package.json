@@ -9,8 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "gun": "^0.2020.1240",
-    "vue": "^3.5.12"
+    "pinia": "^2.2.6",
+    "vue": "^3.5.12",
+    "vue-router": "^4.4.5",
+    "gun": "^0.2020.1240"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",
