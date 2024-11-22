@@ -13,7 +13,7 @@ export function addAnswer(
 
   // Create the answer object
   const newAnswer: Answer = {
-    player_name: playerName,
+    playerName: playerName,
     category: category,
     answer: answer,
   };
@@ -25,7 +25,7 @@ export function addAnswer(
     .get("answers")
     .put(
       {
-        playerName: newAnswer.player_name,
+        playerName: newAnswer.playerName,
         category: newAnswer.category,
         answer: newAnswer.answer,
       },
