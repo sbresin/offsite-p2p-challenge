@@ -52,7 +52,7 @@ export function addAnswer(
 export function fetchLastFiveRounds(): Promise<Round[]> {
   return new Promise((resolve) => {
     const rounds: Round[] = [];
-    const promises: Promise<void>[] = [];
+    // const promises: Promise<void>[] = [];
 
     gun
       .get("ecir")

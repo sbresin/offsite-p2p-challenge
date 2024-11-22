@@ -3,12 +3,17 @@ import { ref, computed } from 'vue'
 
 type scoredAnswer = { answer: string, score: number };
 
+import { fetchLastFiveRounds } from "../data";
+
+
 const roundsdata = ref([
   { key: "round1", submissions: [] },
   { key: "round2", submissions: [] },
   { key: "round3", submissions: [{ player: "munam", answers: { city: "Amsterdam" } }, { player: "ecir", answers: { city: "Anaheim" } }, { player: "ali", answers: { city: "Amsterdam" } }] }
 ]);
 
+// let roundsdata = ref([]);
+// roundsdata = fetchLastFiveRounds();
 
 const scores = computed(() => {
   return roundsdata.value.map(round => {
