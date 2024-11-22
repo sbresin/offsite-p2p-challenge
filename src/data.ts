@@ -60,7 +60,9 @@ export function fetchLastFiveRounds(): Promise<Round[]> {
       .once((data: Round, roundId: string) => {
         if (data && data.timestamp) {
           // Log each round as it's retrieved
-          console.log(`Fetched round: ${roundId}, Timestamp: ${data.timestamp}`);
+          console.log(
+            `Fetched round: ${roundId}, Timestamp: ${data.timestamp}`,
+          );
           rounds.push({ ...data, round_id: roundId });
         }
       });
@@ -88,8 +90,6 @@ export function fetchLastFiveRounds(): Promise<Round[]> {
   });
 }
 
-
-
 export function getSomeRoundsForTests() {
   console.log("hello");
 
@@ -115,4 +115,26 @@ export function getRoundId(dateTime: Date | string): string {
   const minutes = date.getMinutes().toString().padStart(2, "0");
 
   return `${hours}${minutes}`;
+}
+
+export function getAlphabetFromMinuteOfDay(dateTime: Date | string): string {
+  // Convert the input to a Date object
+  const date = typeof dateTime === "string" ? new Date(dateTime) : dateTime;
+
+  // Validate the date
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date provided");
+  }
+
+  // Calculate the total minutes past midnight
+  const totalMinutes = date.getHours() * 60 + date.getMinutes();
+
+  // Define the alphabet
+  const alphabet = "YZDWXABCTEFGHIJKLMNOPQRSTUVW";
+
+  // Map the total minutes to a letter
+  const letterIndex = totalMinutes % alphabet.length;
+
+  // Return the corresponding letter
+  return alphabet[letterIndex];
 }
