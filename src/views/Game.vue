@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { usePlayer } from '../stores/player';
 import { useLetter } from '../stores/letter';
 import { Category } from "../lib/types";
+import { addAnswer } from "../data";
 
 // Access the Pinia letter store
 const player = usePlayer();
@@ -27,7 +28,7 @@ onMounted(() => {
 
 const handleSubmit = () => {
   categories.forEach((category) => {
-    letter.addAnswers(category, player[category]);
+    addAnswer('1', player.name, player.name, category, player[category])
   });
   console.log(letter.answer);
 };
