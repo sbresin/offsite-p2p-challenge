@@ -1,16 +1,32 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 type scoredAnswer = { answer: string, score: number };
 
 import { fetchLastFiveRounds } from "../data";
 
-
-const roundsdata = ref([
+const roundsdata = ref<{ key: string, submissions: { player: string, answers: any }[] }[]>([
   { key: "round1", submissions: [] },
   { key: "round2", submissions: [] },
   { key: "round3", submissions: [{ player: "munam", answers: { city: "Amsterdam" } }, { player: "ecir", answers: { city: "Anaheim" } }, { player: "ali", answers: { city: "Amsterdam" } }] }
 ]);
+
+onMounted(async () => {
+  const gundata = await fetchLastFiveRounds();
+  roundsdata.value = gundata.map((round: any) => {
+    const submissions = round.answers.reduce((aggregated: any, gunanswer: any) => {
+      if (!aggregated.has(gunanswer.playerName)) {
+        aggregated.set(gunanswer.playerName, new Array<any>());
+      }
+      aggregated.get(gunanswer.playerName).push({ [gunanswer.category]: gunanswer.answer });
+    }, new Map<string, any>());
+    const tmp = Object.entries(submissions).map(([player, answers]) => {
+      return { player, answers };
+    });
+    return { key: round.round_id, submissions: tmp }
+  });
+});
+
 
 // let roundsdata = ref([]);
 // roundsdata = fetchLastFiveRounds();
@@ -22,6 +38,7 @@ const scores = computed(() => {
         if (!aggregated.has(key)) {
           aggregated.set(key, new Array<string>());
         }
+        // @ts-ignore
         aggregated.get(key).push(value)
       });
       return aggregated;
