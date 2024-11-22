@@ -1,5 +1,5 @@
 export interface Answer {
-  player_name: string; // Name of the player
+  playerName: string; // Name of the player
   category: string; // Category for the answer
   answer: string; // The actual answer
 }

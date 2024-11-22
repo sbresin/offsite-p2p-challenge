@@ -13,18 +13,36 @@ const roundsdata = ref<{ key: string, submissions: { player: string, answers: an
 
 onMounted(async () => {
   const gundata = await fetchLastFiveRounds();
-  roundsdata.value = gundata.map((round: any) => {
-    const submissions = round.answers.reduce((aggregated: any, gunanswer: any) => {
-      if (!aggregated.has(gunanswer.playerName)) {
-        aggregated.set(gunanswer.playerName, new Array<any>());
+
+  const roundObj = gundata.reduce((aggr, round) => {
+    console.log('hello')
+    console.log(round);
+    console.log(round.answers);
+
+    const gunAnswers = Array.isArray(round.answers) ? round.answers : [round.answers];
+    const answersObj = gunAnswers.reduce((aggregated: any, gunanswer) => {
+      console.log(gunanswer);
+      if (!aggregated[gunanswer.playerName]) {
+        aggregated[gunanswer.playerName] = { answers: {} };
       }
-      aggregated.get(gunanswer.playerName).push({ [gunanswer.category]: gunanswer.answer });
-    }, new Map<string, any>());
-    const tmp = Object.entries(submissions).map(([player, answers]) => {
+      aggregated[gunanswer.playerName].answers[gunanswer.category] = gunanswer.answer;
+      return aggregated;
+    }, {});
+
+    const tmp = (answersObj && Object.entries(answersObj).map(([player, answers]) => {
+      console.log(player, answers);
       return { player, answers };
-    });
-    return { key: round.round_id, submissions: tmp }
-  });
+    })) || [];
+
+    if (!aggr[round.round_id]) {
+      aggr[round.round_id] = { submissions: [] };
+    }
+    aggr[round.round_id].submissions.push(...tmp);
+    return aggr;
+  }, []);
+
+  roundsdata.value = Object.entries(roundObj).map(([key, { submissions }]) => ({ key, submissions }));
+  console.log(roundsdata.value);
 });
 
 
