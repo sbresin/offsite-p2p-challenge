@@ -23,9 +23,9 @@ onMounted(async () => {
     const answersObj = gunAnswers.reduce((aggregated: any, gunanswer) => {
       console.log(gunanswer);
       if (!aggregated[gunanswer.playerName]) {
-        aggregated[gunanswer.playerName] = { answers: {} };
+        aggregated[gunanswer.playerName] = {};
       }
-      aggregated[gunanswer.playerName].answers[gunanswer.category] = gunanswer.answer;
+      aggregated[gunanswer.playerName][gunanswer.category] = gunanswer.answer;
       return aggregated;
     }, {});
 
@@ -81,7 +81,7 @@ const scores = computed(() => {
       ...round,
       submissions: scoredSubmissions
     };
-  });
+  }).sort((a, b) => b.key > a.key ? -1 : 1);
 });
 
 const latestRound = computed(() => {
@@ -90,7 +90,7 @@ const latestRound = computed(() => {
 </script>
 
 <template>
-  <h2 class="text-lg text-nowrap">Leaderboard (next round starts in
+  <h2 class="text-lg text-nowrap">Leaderboard Round {{ latestRound.key }} (next round starts in
     <CountDown class="nogrow" :even="false" />)
   </h2>
   <div class="flex flex-col items-center h-screen w-full">
@@ -132,7 +132,7 @@ const latestRound = computed(() => {
                 }}
                 ({{
                   submission.answers["tech"].score }})</span></td>
-            <td class="border border-slate-600 p-2"><span v-if="submission.answers['bvg']">{{
+            <td class="border border-slate-600 p-2"><span v-if="submission.answers['bvgStations']">{{
               submission.answers["bvgStations"].answer
                 }}
                 ({{
