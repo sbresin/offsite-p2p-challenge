@@ -20,7 +20,7 @@ export function addAnswer(
 
   // Create or update the round entry
   gun
-    .get("ecir")
+    .get("gameturns")
     .get(roundId)
     .get("answers")
     .put(
@@ -34,7 +34,7 @@ export function addAnswer(
 
   // Ensure the round entry has a timestamp
   gun
-    .get("ecir")
+    .get("gameturns")
     .get(roundId)
     .put(
       {
@@ -52,31 +52,38 @@ export function addAnswer(
 export function fetchLastFiveRounds(): Promise<Round[]> {
   return new Promise((resolve) => {
     const rounds: Round[] = [];
+    const promises: Promise<void>[] = [];
 
     gun
-      .get("ecir")
+      .get("gameturns")
       .map()
       .once((data: Round, roundId: string) => {
         if (data && data.timestamp) {
-          rounds.push({ ...data, round_id: roundId });
+          promises.push(
+            new Promise((res) => {
+              rounds.push({ ...data, round_id: roundId });
+              res(); // Resolve once this round is processed
+            })
+          );
         }
       });
 
-    // Wait to ensure all data is loaded, then process
-    setTimeout(() => {
+    // Wait for all rounds to be processed
+    Promise.all(promises).then(() => {
       const sortedRounds = rounds.sort((a, b) => b.timestamp - a.timestamp);
       const lastFiveRounds = sortedRounds.slice(0, 5);
       resolve(lastFiveRounds);
-    }, 1000);
+    });
   });
 }
+
 
 export function createBaseRounds() {
   console.log("hello");
 
   for (let i = 1; i <= 2; ++i) {
     gun
-      .get("ecir")
+      .get("gameturns")
       .get(`testRound${i}`)
       .get("answers")
       .on((data) => console.log(data));

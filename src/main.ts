@@ -1,8 +1,11 @@
 import { createApp } from "vue";
 import "./style.css";
 import App from "./App.vue";
-import { createBaseRounds } from "./data";
+import { createBaseRounds, fetchLastFiveRounds } from "./data";
 
 createApp(App).mount("#app");
 
-createBaseRounds();
+fetchLastFiveRounds().then((rounds) => {
+    console.log("Last five rounds:", rounds);
+  });
+  
