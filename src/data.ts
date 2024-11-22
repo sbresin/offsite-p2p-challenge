@@ -1,20 +1,7 @@
 import Gun from "gun";
 import { Answer, Round } from "./types";
 
-// import Gun from 'gun/gun'
-// import SEA from 'gun/sea.js'
-// import 'gun/lib/radix'
-// import 'gun/lib/radisk'
-// import 'gun/lib/store'
-// import 'gun/lib/rindexed'
-// import 'gun/lib/webrtc'
-// import 'gun/nts'
-// export const gun = Gun({peers: ['https://your.gun.peer'], localStorage:false})
-
 const gun = Gun({ peers: ["https://gun-manhattan.herokuapp.com/gun"] });
-
-// Add an answer to a round
-//
 
 export function addAnswer(
   roundId: string,
@@ -23,27 +10,39 @@ export function addAnswer(
   answer: string,
 ): void {
   const timestamp = Date.now();
-  const eg = gun.get("example");
 
   // Create the answer object
   const newAnswer: Answer = {
     player_name: playerName,
-    category,
-    answer,
+    category: category,
+    answer: answer,
   };
 
   // Create or update the round entry
-  eg.get("rounds").get(roundId).get("answers").put({
-    playerName: playerName,
-    answer: newAnswer,
-  });
+  gun
+    .get("ecir")
+    .get(roundId)
+    .get("answers")
+    .put(
+      {
+        playerName: newAnswer.player_name,
+        category: newAnswer.category,
+        answer: newAnswer.answer,
+      },
+      () => console.log("created answer"),
+    );
 
   // Ensure the round entry has a timestamp
-  eg.get("rounds").get(roundId).put({
-    round_id: roundId,
-    timestamp: timestamp,
-    answers: [],
-  });
+  gun
+    .get("ecir")
+    .get(roundId)
+    .put(
+      {
+        round_id: roundId,
+        timestamp: timestamp,
+      },
+      () => console.log("created round"),
+    );
 
   console.log(
     `Answer added: Round (${roundId}), Player (${playerName}), Category (${category})`,
@@ -55,7 +54,7 @@ export function fetchLastFiveRounds(): Promise<Round[]> {
     const rounds: Round[] = [];
 
     gun
-      .get("rounds")
+      .get("ecir")
       .map()
       .once((data: Round, roundId: string) => {
         if (data && data.timestamp) {
@@ -73,13 +72,13 @@ export function fetchLastFiveRounds(): Promise<Round[]> {
 }
 
 export function createBaseRounds() {
-  // gun.get("example").once((data) => {
-  //   if (data) {
-  //     Object.keys(data).forEach((key) => {
-  //       gun.get("test").get(key).put(null);
-  //     });
-  //   }
-  // });
+  console.log("hello");
 
-  gun.get("example").on((data) => console.log(data));
+  for (let i = 1; i <= 2; ++i) {
+    gun
+      .get("ecir")
+      .get(`testRound${i}`)
+      .get("answers")
+      .on((data) => console.log(data));
+  }
 }
