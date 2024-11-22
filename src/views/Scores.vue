@@ -133,10 +133,10 @@ const latestRound = computed(() => {
                 ({{
                   submission.answers["tech"].score }})</span></td>
             <td class="border border-slate-600 p-2"><span v-if="submission.answers['bvg']">{{
-              submission.answers["bvg"].answer
+              submission.answers["bvgStations"].answer
                 }}
                 ({{
-                  submission.answers["bvg"].score }})</span></td>
+                  submission.answers["bvgStations"].score }})</span></td>
           </tr>
         </tbody>
       </table>
