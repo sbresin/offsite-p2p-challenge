@@ -50,8 +50,11 @@ const latestRound = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center h-screen w-full">
-    <h2 class="text-lg text-nowrap">Leaderboard</h2>
+  <h2 class="text-lg text-nowrap">Leaderboard (next round starts in
+    <CountDown class="nogrow" :even="false" />)
+  </h2>
+  <div class="flex flex-col items-center h-screen w-full">
+
     <div class="grow">
       <table v-if="latestRound"
         class="table-auto text-nowrap nowrap border-spacing-2 border border-slate-500 flex-grow">
