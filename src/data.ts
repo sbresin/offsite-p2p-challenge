@@ -63,8 +63,21 @@ export function fetchLastFiveRounds(): Promise<Round[]> {
           console.log(
             `Fetched round: ${roundId}, Timestamp: ${data.timestamp}`,
           );
-          rounds.push({ ...data, round_id: roundId });
+          console.log("Sorting rounds by timestamp...", data);
+          var currentRound: Round = {
+            ...data,
+            round_id: roundId,
+          };
+          gun
+            .get("ecir")
+            .get(roundId)
+            .get("answers")
+            .on((data) => (currentRound.answers = data));
+
+          rounds.push(currentRound);
         }
+
+        console.log("Rounds", rounds);
       });
 
     // Listen for changes and resolve once the data is completely loaded
@@ -73,7 +86,6 @@ export function fetchLastFiveRounds(): Promise<Round[]> {
       .map()
       .once(() => {
         // Log before sorting the rounds
-        console.log("Sorting rounds by timestamp...");
 
         // Sort the rounds by timestamp in descending order
         const sortedRounds = rounds.sort((a, b) => b.timestamp - a.timestamp);
