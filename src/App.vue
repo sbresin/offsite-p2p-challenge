@@ -1,7 +1,19 @@
 
 <template>
-  <div>
-
+  <div class="center-container">
+    <RouterView />
   </div>
-  <RouterView />
 </template>
+
+<style scoped>
+.center-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+</style>
+<script setup lang="ts">
+</script>
