@@ -38,4 +38,12 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
+input {
+  margin-bottom: 10px;
+  padding: 5px;
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid;
+}
 </style>

@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { usePlayer } from '../stores/player';
 import { useLetter } from '../stores/letter';
+const router = useRouter();
+
 import { Category } from "../lib/types";
-import { addAnswer } from "../data";
+import { addAnswer, getRoundId } from "../data";
 
 // Access the Pinia letter store
 const player = usePlayer();
@@ -28,16 +32,16 @@ onMounted(() => {
 
 const handleSubmit = () => {
   categories.forEach((category) => {
-    addAnswer('1', player.name, player.name, category, player[category])
+    addAnswer(getRoundId(new Date()), player.name, category, player[category])
   });
-  console.log(letter.answer);
+  router.push({ path: '/score' });
 };
 </script>
 
 <template>
   <h2>Time: {{ gameTime }}</h2>
   <h2>Letter: {{ letter.randomLetter }}</h2>
-  <p>Hello {{ player.name }}</p>
+  <p>Hello </p><strong>{{ player.name }}</strong>
 
   <div v-for="category in categories" :key="category">
     <label :for="category">{{ category }}:</label>
@@ -63,6 +67,7 @@ input {
   padding: 5px;
   width: 100%;
   max-width: 300px;
+  border: 1px solid;
 }
 
 button {

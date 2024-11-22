@@ -52,11 +52,8 @@ export function addAnswer(
 export function fetchLastFiveRounds(): Promise<Round[]> {
   return new Promise((resolve) => {
     const rounds: Round[] = [];
+    const promises: Promise<void>[] = [];
 
-    // Log the start of the data fetch
-    console.log("Fetching rounds from GunDB...");
-
-    // Use the map() function to iterate over all rounds in GunDB
     gun
       .get("ecir")
       .map()
@@ -78,7 +75,7 @@ export function fetchLastFiveRounds(): Promise<Round[]> {
 
         // Sort the rounds by timestamp in descending order
         const sortedRounds = rounds.sort((a, b) => b.timestamp - a.timestamp);
-        
+
         // Slice the first 5 rounds
         const lastFiveRounds = sortedRounds.slice(0, 5);
 
@@ -103,4 +100,19 @@ export function getSomeRoundsForTests() {
       .get("answers")
       .on((data) => console.log(data));
   }
+}
+
+export function getRoundId(dateTime: Date | string): string {
+  // Ensure the input is a Date object
+  const date = typeof dateTime === "string" ? new Date(dateTime) : dateTime;
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date provided");
+  }
+
+  // Extract hours and minutes
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${hours}${minutes}`;
 }
